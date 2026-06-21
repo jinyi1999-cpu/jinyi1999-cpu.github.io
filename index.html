@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日投资简报</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.6; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 40px 20px; text-align: center; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header .date { font-size: 16px; opacity: 0.85; }
+.header .meta { font-size: 13px; opacity: 0.6; margin-top: 8px; }
+.container { max-width: 800px; margin: 0 auto; padding: 20px 16px; }
+.section { background: #fff; border-radius: 16px; padding: 24px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.section-title .icon { font-size: 22px; }
+.post-item { padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+.post-item:last-child { border-bottom: none; padding-bottom: 0; }
+.post-item:first-child { padding-top: 0; }
+.post-rank { display: inline-block; width: 24px; height: 24px; border-radius: 6px; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; color: #fff; margin-right: 8px; vertical-align: middle; }
+.rank-1 { background: #ff3b30; }
+.rank-2 { background: #ff6b35; }
+.rank-3 { background: #ff9500; }
+.rank-other { background: #8e8e93; }
+.post-title { font-size: 15px; font-weight: 500; color: #1d1d1f; margin-bottom: 6px; line-height: 1.5; }
+.post-title a { color: #1d1d1f; text-decoration: none; }
+.post-title a:hover { color: #0f3460; }
+.post-link { font-size: 12px; color: #0f3460; text-decoration: none; margin-left: 4px; opacity: 0.7; }
+.post-link:hover { opacity: 1; }
+.post-meta { font-size: 12px; color: #8e8e93; display: flex; gap: 12px; flex-wrap: wrap; }
+.post-meta span { display: flex; align-items: center; gap: 3px; }
+.post-desc { font-size: 13px; color: #6e6e73; margin-top: 6px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sa-news-item { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
+.sa-news-item:last-child { border-bottom: none; padding-bottom: 0; }
+.sa-news-item:first-child { padding-top: 0; }
+.sa-news-title { font-size: 15px; font-weight: 500; color: #1d1d1f; margin-bottom: 4px; line-height: 1.5; }
+.sa-news-title a { color: #1d1d1f; text-decoration: none; }
+.sa-news-title a:hover { color: #0f3460; }
+.sa-news-meta { font-size: 12px; color: #8e8e93; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.sa-ticker { display: inline-block; background: #f0f0f5; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 600; font-family: 'SF Mono', Menlo, monospace; }
+.sa-ticker.up { background: #fff0f0; color: #ff3b30; }
+.sa-ticker.down { background: #f0fff4; color: #34c759; }
+.yt-channel { display: inline-block; background: #fff5f0; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 500; color: #c75000; }
+.stock-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.stock-table th { text-align: left; padding: 10px 8px; color: #8e8e93; font-weight: 500; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
+.stock-table td { padding: 10px 8px; border-bottom: 1px solid #f5f5f7; }
+.stock-table tr:last-child td { border-bottom: none; }
+.up { color: #ff3b30; font-weight: 600; }
+.down { color: #34c759; font-weight: 600; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat-card { background: #f5f5f7; border-radius: 12px; padding: 16px 12px; text-align: center; }
+.stat-card .value { font-size: 24px; font-weight: 700; color: #1d1d1f; }
+.stat-card .label { font-size: 12px; color: #8e8e93; margin-top: 4px; }
+.footer { text-align: center; padding: 20px; font-size: 12px; color: #8e8e93; }
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .stock-table { font-size: 12px; }
+  .stock-table th, .stock-table td { padding: 8px 4px; }
+  .header h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 每日投资简报</h1>
+  <div class="date" id="reportDate"></div>
+  <div class="meta">数据来源：雪球热门 + Seeking Alpha + Engadget + YouTube AI + 腾讯自选股 | Codex 自动生成</div>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-title"><span class="icon">🔥</span> 雪球热门帖子 TOP20</div>
+    <div id="posts"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">🇺🇸</span> Seeking Alpha 热点新闻 TOP15</div>
+    <div id="saPosts"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">💻</span> Engadget 科技热点 TOP15</div>
+    <div id="engadgetPosts"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">🎬</span> YouTube AI 热门视频 TOP15</div>
+    <div id="ytPosts"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">📈</span> 热搜股票 TOP20</div>
+    <table class="stock-table">
+      <thead><tr><th>#</th><th>名称</th><th>代码</th><th>涨跌幅</th><th>现价</th></tr></thead>
+      <tbody id="stocks"></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="icon">📊</span> 数据统计</div>
+    <div class="stat-grid" id="stats"></div>
+  </div>
+
+</div>
+
+<div class="footer">本报告由 Codex 自动生成，仅供参考，不构成投资建议。</div>
+
+<script>
+const DATA = {"date": "2026-06-21", "posts": [{"id": 395719018, "title": "也说说老登与小登", "desc": "周五中际旭创和寒武纪的新高，无疑触动了很多“价值投资者”脆弱的神经 。以我自己为例，一周短短四个交易日，我账户涨幅是28%，故老登被吸血到破防，是很正常的情绪反馈。<br/>于是，周末雪球最热的贴子，是老登们在拼了命的唱衰科技、自我安慰“坚守价值，终会回归”。当然，也有部分科技小登奋...", "user": "第二十三夜", "user_id": 8438685251, "reply": 55, "likes": 112, "views": 58390, "created": 1781935623000}, {"id": 395719488, "title": "没有“梦”，只有坚实的数据", "desc": "好久没对组合的健康度把脉了，节假日就是做做表格最好的时机，反正也不出去玩。<br/>今天花时间把整个组合的关键指标都列了个表。<br/>组合加权市盈率TTM10.9，加权股息率3.4%，加上回购注销股东权益4.1%以上。<br/>这就是我这个持仓组合最大的底气，超级低估的估值区间，我不认为再有持续大跌的...", "user": "CobraAntony", "user_id": 5068022281, "reply": 89, "likes": 57, "views": 119534, "created": 1781936172000}, {"id": 395712464, "title": "康方生物入门（六）：双抗追兵来了，康方能否先一步证道IO 2.0？", "desc": "前面几篇，我们一直在讲AK112。<br/>但研究康方到这一步，投资者一定会遇到一个更现实的问题：<br/>既然AK112这条路看起来这么有希望，别人会不会也做一个类似的双抗？<br/>答案是，会。<br/>而且不只是会，现在追兵已经来了。<br/>BMS、辉瑞、默沙东、艾伯维这些全球大药企，都已经通过合作、引进...", "user": "坚磐石", "user_id": 7689266474, "reply": 42, "likes": 42, "views": 72100, "created": 1781928814000}, {"id": 395713396, "title": "全面通航：图景展望", "desc": "你能想象这条海峡全面通航的景象吗？<br/>6 月 19 日<br/>这份谅解备忘录的签署，不过是对过去数周市场既有态势的一纸确认，而归根结底，我们唯一关心的 核心事实只有一件：原油正在流通转运 。<br/>尽管实际流通的原油桶数仍存争议，但有一点确凿无疑 —— 也就是油价，这是眼下唯一直观可见的市...", "user": "油轮科技", "user_id": 8655052669, "reply": 37, "likes": 46, "views": 56352, "created": 1781929721000}, {"id": 395706439, "title": "“电容”板块逻辑梳理", "desc": "AI不仅越来越缺芯片，也越来越缺电。<br/>而在这个过程中，一个过去并不起眼的环节开始被重新定价——电容。<br/>国金证券甚至给它起了一个新的名字：电RAM（Power RAM）。<br/>为什么电容突然变重要？<br/>先理解一个概念。<br/>HBM的作用是数据缓冲。GPU计算速度太快，普通存储跟不上，所以需要H...", "user": "十倍幻想家", "user_id": 7288908717, "reply": 1, "likes": 8, "views": 16218, "created": 1781923705000}, {"id": 395705883, "title": "一周暴涨50%领涨存储！普冉股份：核心逻辑、预期差与风险全拆解", "desc": "近一周普冉股份累计涨幅超50%，持续创出历史新高，领涨整个存储板块。本文梳理核心上涨逻辑、市场未充分定价的预期差，以及后续风险，仅为个人研究思考，不构成任何投资建议。<br/> 一、上涨的三大核心驱动 <br/>1. 行业β：利基存储涨价弹性更强<br/>全球存储处于AI驱动的景气上行周期，2026Q2主...", "user": "财务自由AT56", "user_id": 5963406195, "reply": 2, "likes": 11, "views": 33319, "created": 1781923242000}, {"id": 395681095, "title": "ROE接近30%，PE只给12倍：宝丰能源，错杀还是陷阱？", "desc": "今天聊一家让我有点分裂的公司，宝丰能源。<br/>先扔几个数字，你们感受一下：ROE超过25%，一年怒赚113个亿，利润原地起跳暴涨接近80%——结果市场先生面无表情，只给它10倍的PE。这什么概念呢？就好比你路过一家拍卖行，看见一台崭新的印钞机在拍卖，起拍价居然是按废铁秤重算的。这时候你脑子里...", "user": "小韭菜的成长记录", "user_id": 8066055503, "reply": 59, "likes": 52, "views": 144958, "created": 1781876707000}, {"id": 395698507, "title": "皇帝的新衣，再聊中际旭创", "desc": "中际旭创的股价神话，正在变成一场击鼓传花的危险游戏。 大股东在200多元减持时被嘲&#34;不懂价值&#34;，如今股价冲上1368元——到底是谁不懂？<br/>一、200元减持成&#34;笑柄&#34;？董事长再不懂，也比散户懂\n2025年8月初，中际旭创公告，股东王晓东计划在210.63元/股的价格附近减持不超过71.91万...", "user": "顺为价投", "user_id": 8070644999, "reply": 422, "likes": 255, "views": 351754, "created": 1781916531000}, {"id": 395653795, "title": "当核心资源不再在酒桌上，白酒会发生什么？", "desc": "很多人认为白酒不行了，是因为年轻人不喝酒了。我觉得这可能不是最核心的原因。白酒最大的变化，不在消费端，而在中国经济底层运行逻辑的变化。<br/>过去二十多年，中国经济最重要的增长动力是房地产。而房地产最核心的资源是土地。土地掌握在谁手里？掌握在zf手里。企业想要快速发展，就需要拿地...", "user": "市场第一性原理", "user_id": 5770461469, "reply": 85, "likes": 41, "views": 39538, "created": 1781851053000}, {"id": 395660223, "title": "投资者对创新药行业的六大认知偏差", "desc": "这周港股荣昌生物跌得我不想说话。我不想再反复谈它的价值，因为价值就在那里，懂得都懂。作为一个创新药投资小白，我努力从荣昌生物这口&#34;井&#34;里仰望整个创新药行业——发现投资者对这个行业存在六大认知偏差，逐一道来。<br/>1. 集采，企业根本挣不到钱<br/>这个认知偏差不值一驳。创新药...", "user": "愿投资从容", "user_id": 8498172218, "reply": 34, "likes": 52, "views": 44494, "created": 1781857197000}, {"id": 395673143, "title": "在撕裂中坚守投资的常识，告全体老登书！", "desc": "资产的价值，说到底是未来现金流的折现。这是投资最朴素的常识，任你叙事再怎么花哨，终究都要回到这里接受检验。<br/>当下A股的撕裂，已经达到了一个很罕见的程度。<br/>整个上半年，以半导体、光模块、存储芯片及其延伸概念——玻璃基板、印制电路板、AI算力——为核心的科技板块持续暴涨。<br/>...", "user": "养叔的猫", "user_id": 5742821612, "reply": 155, "likes": 444, "views": 242266, "created": 1781869538000}, {"id": 395635467, "title": "恭喜小登的勇敢，也聊聊老登为何固执", "desc": "先说下定投账户，去年上涨期间定投账户减仓了部分持仓，定投也暂停了，本周逐步开始新定投。本周分别买入食品饮料，中概互联、恒生科技。<br/>昨天小号发通知的时候有读者问，怎么还买传统行业。<br/>确实，老登股必须死，传统行业毫无价值，这类发言是现在的主流。<br/>当下除了AI，好像任何行业...", "user": "终身黑白", "user_id": 1643044849, "reply": 184, "likes": 486, "views": 305288, "created": 1781836659000}, {"id": 395624529, "title": "莫失敬畏心", "desc": "今年5月份，社会消费品零售总额同比下降0.6%，引发各界广泛关注。消费是最终需求，对经济发展具有基础性作用。求是网：要以更大力度提振消费。消费政策要加码了。<br/> 无论科技如何发展，最终都是为人的需求服务的，不然这件事就不可持续。科技树点错就是裁员降薪，经济通缩，科技树点对就是解决...", "user": "酒金岁月", "user_id": 7913104177, "reply": 24, "likes": 81, "views": 47705, "created": 1781828994000}, {"id": 395629686, "title": "这里的黎明静悄悄！长鑫长江IPO即将引爆国产HBM链狂飙浪潮", "desc": "众所周知我非常看好国产HBM链。我的态度是长鑫和长江存储会改变这轮AI变革的东大地位，从代工喝肉汤走到上周打牌的独立自主。有高层朋友给我分享的两长战略地位是， 到2027年，两长HBM存储链须带领全东大AI产业链利润在全球份额中从4%增长到10% ，且不许内耗、不许内卷。 参考三星海力士在棒子国的...", "user": "金阙鸣镝", "user_id": 4716631839, "reply": 47, "likes": 23, "views": 46051, "created": 1781832867000}, {"id": 395626145, "title": "老登股的流动性“斩杀线”", "desc": "A股的分化，依然继续中。<br/>以中证A股看，微涨0.34%，成交额总算微微放大至3.26万亿元。<br/>而双创的虹吸，则是加剧。创业板指上涨2.05%，科创50上涨3.84%。<br/>与之对应的，是万得微盘股指数下跌0.22%，中证红利大跌2.16%。<br/>这个局面，也大致能猜得出行业是什么格局。通信、半导体再加一...", "user": "张翼轸", "user_id": 3559889031, "reply": 104, "likes": 123, "views": 75264, "created": 1781830223000}, {"id": 395619742, "title": "现在的A股，正在惩罚理性者", "desc": "现在股市冰火两重天。<br/>我知道很多朋友都被折磨得不行了。<br/>一边是估值涨上天，另一边是估值跌到地板了，还要再使劲跺几脚。<br/>这个时候都会把人搞得很困惑。因为下跌的时候，很难不怀疑是不是哪里出问题了。<br/>如果跌幅还比较大，更是要怀疑人生。<br/>确实，有些股票或者行业的基本面...", "user": "睿知睿见", "user_id": 1843761023, "reply": 236, "likes": 389, "views": 285196, "created": 1781823542000}, {"id": 395511816, "title": "6.18一个新旧经济次序交替的日子", "desc": "今天确实是个值得纪念的日子，旭创市值成功反超茅台，我大账户的收益率也成功突破200倍。<br/>今天不是一次普通的核心赛道切换，而是中国经济底层动力切换的精准映射——一个依托人口数量红利的消费时代正在远去，一个由人工智能红利驱动的科技时代已然登场。<br/>明天放假了，今天给大伙更新一下...", "user": "杨爽511", "user_id": 8141527616, "reply": 399, "likes": 689, "views": 247371, "created": 1781766467000}, {"id": 395491056, "title": "国投电力川投能源最大分歧在来水-兼川投能源价值的底层分析之雅砻江篇", "desc": "国投电力、川投能源尤其是川投能源今年的股价波频率高幅度大，其中主要的原因是来水预期，特别是上半年来水进而是发电量情况判断分期。一方面认为今年上半年和去年有较大减少，但二季度和去年差不多，另有人认为二季度和去年接近，上班总体略有减少。下面就锦屏一级为切入点，对雅砻江来水进行分析...", "user": "懂你所思所想", "user_id": 6699030100, "reply": 62, "likes": 53, "views": 195057, "created": 1781763268000}, {"id": 395452754, "title": "美元资产的流动性海绵，越来越结构化的美元通胀", "desc": "我先叠个甲，纯属个人随笔，认真你就输了。<br/>告别了这些年我们熟悉的鲍威尔，美联储新主席沃什首次出场热度很高，对于利率态度的各种解读已经满天飞了。<br/>咱们今天跳出“猜鹰猜鸽”的常规分析，做个有趣的思维实验：如果你站在美联储的角度，会怎么做？<br/>核心问题之一就是通胀。现在这轮...", "user": "泡沫艺术家", "user_id": 9222280625, "reply": 0, "likes": 89, "views": 58195, "created": 1781755291000}, {"id": 395533911, "title": "AI学习笔记（二）：具身智能（概览）", "desc": "上一篇笔记与大家分享了物理AI。总体上是个比较抽象的概念，今天就介绍它最主要的落地场景之一：具身智能。<br/>因为具身智能内容很多，这篇主要做个概览。后续还会出关于产业链的细分篇，例如各零部件、灵巧手等。<br/> 提示：本文仅为学习笔记分享，不构成任何投资建议 <br/>一、具身智能概念<br...", "user": "陆家嘴幽灵", "user_id": 5332385101, "reply": 94, "likes": 52, "views": 33847, "created": 1781771137000}], "saNews": [{"id": "4605288", "title": "Trump says Anthropic is no longer a national security threat: Axios", "url": "https://seekingalpha.com/news/4605288-trump-says-anthropic-not-national-security-threat", "ticker": "ANTHRO", "summary": "AI行业动态，关注Anthropic/OpenAI等公司的模型发布和监管"}, {"id": "4605205", "title": "Insider trades: American Express, Dell and Broadcom among notable names", "url": "https://seekingalpha.com/news/4605205-insider-trades-american-express-dell-and-broadcom-among-notable-names", "ticker": "TSM +6.94%", "summary": "内部人交易披露，关注高管增减持动态"}, {"id": "4605282", "title": "Iran closes Strait of Hormuz citing ceasefire violations", "url": "https://seekingalpha.com/news/4605282-iran-closes-strait-hormuz-but-sends-negotiators", "ticker": "XLE -1.65%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605196", "title": "Notable tech headlines for the week: Accenture, Nvidia, Micron in focus", "url": "https://seekingalpha.com/news/4605196-notable-tech-headlines-for-the-week-accenture-nvidia-micron-in-focus", "ticker": "MU +8.70%", "summary": "半导体行业动态，关注AI芯片需求和地缘政治影响"}, {"id": "4605192", "title": "Notable analyst calls this week: Lyft, Exxon Mobil and Micron among top picks", "url": "https://seekingalpha.com/news/4605192-notable-analyst-calls-this-week-lyft-exxon-mobil-and-micron-among-top-picks", "ticker": "AMD +4.86%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605280", "title": "Trump unveils Qatar-gifted Boeing 747 to be new Air Force One", "url": "https://seekingalpha.com/news/4605280-trump-unveils-boeing-747-new-air-force-one", "ticker": "BA -1.29%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605279", "title": "Charles Schwab partnering with Cboe to offer prediction market-like contracts: WSJ", "url": "https://seekingalpha.com/news/4605279-charles-schwab-cboe-venturing-prediction-markets", "ticker": "SCHW -2.97%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605041", "title": "The Playboy brand lives on long after the magazine died", "url": "https://seekingalpha.com/news/4605041-meet-the-new-playboy-not-the-same-as-the-old-playboy", "ticker": "PLBY +1.40%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605278", "title": "AbbVie said to be nearing a $10.9B deal to buy Apogee Therapeutics", "url": "https://seekingalpha.com/news/4605278-abbvie-nearing-109b-deal-buy-apogee-thera", "ticker": "ABBV -2.14%", "summary": "涉及重大并购交易，关注交易对价及战略影响"}, {"id": "4605275", "title": "First Quantum's Cobre Panama mine broadly compliant, government audit says", "url": "https://seekingalpha.com/news/4605275-first-quantums-cobre-panama-mine-broadly-compliant-government-audit-says", "ticker": "FQVLF -2.48%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605204", "title": "Snap gets a reality check as premium AR glasses drive stock slump", "url": "https://seekingalpha.com/news/4605204-snap-gets-a-reality-check-as-premium-ar-glasses-drive-stock-slump", "ticker": "SNAP -1.69%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4604927", "title": "Catalyst Watch: Micron earnings, Amazon Prime Day, and stress tests for major banks", "url": "https://seekingalpha.com/news/4604927-catalyst-watch-micron-earnings-amazon-prime-day-and-stress-tests-for-major-banks", "ticker": "SPY +1.04%", "summary": "公司发布最新财报数据"}, {"id": "4605272", "title": "Canadian bank stocks trade higher as regulator lowers capital requirement", "url": "https://seekingalpha.com/news/4605272-canadian-bank-stocks-trade-higher-as-regulator-lowers-capital-requirement", "ticker": "CM -1.05%", "summary": "监管政策动向，可能影响相关行业和公司经营"}, {"id": "4605270", "title": "Spotify says service restored after outage disrupts streaming", "url": "https://seekingalpha.com/news/4605270-spotify-down-as-users-report-streaming-outage", "ticker": "SPOT +2.74%", "summary": "市场热点新闻，点击查看详情"}, {"id": "4605268", "title": "Ryanair extends CEO Michael O’Leary’s contract to April 2032", "url": "https://seekingalpha.com/news/4605268-ryanair-extends-ceo-michael-olearys-contract-to-april-2032", "ticker": "RYAAY +0.99%", "summary": "市场热点新闻，点击查看详情"}], "engNews": [{"id": "2193212", "title": "2028 Mercedes-Benz VLE first drive: Your 8K living room on wheels has arrived", "url": "https://www.engadget.com/2193212/2028-mercedes-benz-vle-first-drive/", "desc": "With 416 horsepower, a 31-inch 8K screen and Dolby Atmos, Benz’s electric \"Grand Limousine\" might just make minivans cool.", "summary": "XR/AR/VR动态，关注空间计算和头显设备"}, {"id": "2197143", "title": "GTA 6 pre-orders open on June 25", "url": "https://www.engadget.com/2197143/gta-6-pre-orders-open-on-june-25/", "desc": "Pre-orders for Grand Theft Auto 6 open in just one week.", "summary": "游戏行业动态，关注硬件销量和独占内容"}, {"id": "2196666", "title": "XGIMI MemoMind One review: Smart glasses, creepy AI", "url": "https://www.engadget.com/2196666/xgimi-memomind-one-review/", "desc": "XGIMI's MemoMind One is a good pair of smart glasses blighted by a creepy AI that spies on you.", "summary": "电动车行业动态，关注充电基础设施和市场竞争"}, {"id": "2196998", "title": "Midjourney, the AI image generator, is developing a full-body ultrasonic scanner", "url": "https://www.engadget.com/2196998/midjourney-full-body-ultrasonic-scanner/", "desc": "Midjourney has announced its first hardware project, and it can do more than make cute AI pet photos.", "summary": "AI行业动态，关注大模型技术突破和商业化进展"}, {"id": "2198346", "title": "Claude Guillemot, one of Ubisoft’s co-founders, has died in a plane crash", "url": "https://www.engadget.com/2198346/claude-guillemot-one-of-ubisoft-co-founders-has-died-in-a-plane-crash/", "desc": "The crash reportedly happened on an airstrip near the western coast of France on June 19.", "summary": "AI行业动态，关注大模型技术突破和商业化进展"}, {"id": "2198274", "title": "How to personalize the screensaver on your Kindle", "url": "https://www.engadget.com/2198274/how-to-customize-kindle-screensaver-guide/", "desc": "Once you remove lockscreen ads and toggle on book covers, here's what else you can do to customize your Kindle's screensaver.", "summary": "科技行业热点，点击查看详情"}, {"id": "2197854", "title": "Car manufacturers are ditching Android Auto in 2026: Here's why", "url": "https://www.engadget.com/2197854/why-car-manufacturers-ditching-android-auto-explained/", "desc": "Car buyers love Android Auto. Automakers? Not so much.", "summary": "谷歌/Android生态动态，关注搜索和AI竞争格局"}, {"id": "2198323", "title": "Nothing's budget brand CMF won't be releasing a new phone this year", "url": "https://www.engadget.com/2198323/nothing-budget-brand-cmf-new-new-phone-this-year/", "desc": "CMF by Nothing won't be able to release a follow-up to the Phone Pro 2 this year.", "summary": "XR/AR/VR动态，关注空间计算和头显设备"}, {"id": "2198112", "title": "Steam Next Fest demos, a Virtual Boy-inspired shooter and other new indie games worth checking out", "url": "https://www.engadget.com/2198112/steam-next-fest-demos-a-virtual-boy-inspired-shooter-and-other-new-indie-games-worth-checking-out/", "desc": "Steam Next Fest demos, a Virtual Boy-inspired shooter and other new indie games worth checking out.", "summary": "游戏行业动态，关注硬件销量和独占内容"}, {"id": "2197736", "title": "Do fitness trackers still work if you have tattoos?", "url": "https://www.engadget.com/2197736/do-fitness-trackers-work-with-tattoos/", "desc": "The short answer is: sometimes, but it’s complicated.", "summary": "科技行业热点，点击查看详情"}, {"id": "2198117", "title": "Norway imposes broad restrictions on AI for elementary school kids", "url": "https://www.engadget.com/2198117/norway-imposes-broad-restrictions-on-ai-for-elementary-school-kids/", "desc": "Norway will reportedly ban young kids from using AI in schools.", "summary": "AI行业动态，关注大模型技术突破和商业化进展"}, {"id": "2198098", "title": "Doom composer Bobby Prince has died", "url": "https://www.engadget.com/2198098/doom-composer-bobby-prince-has-died/", "desc": "Bobby Prince, composer for Doom and other classic shooters, has died.", "summary": "科技行业热点，点击查看详情"}, {"id": "2197565", "title": "Why people might ditch their smartwatches for something simpler", "url": "https://www.engadget.com/2197565/reasons-why-people-ditch-smartwatches-something-simpler/", "desc": "Not everyone wants a screen on their wrist.", "summary": "XR/AR/VR动态，关注空间计算和头显设备"}, {"id": "2198001", "title": "Amazon won't release Sam Altman biopic focused on OpenAI's 2023 leadership crisis", "url": "https://www.engadget.com/2198001/amazon-mgm-wont-release-sam-altman-biopic/", "desc": "Luca Guadagnino’s Sam Altman biopic has to find a new studio after Amazon dropped it.", "summary": "AI行业动态，关注大模型技术突破和商业化进展"}, {"id": "2197988", "title": "Amazon is investigating three employees who spoke out against building more AI data centers", "url": "https://www.engadget.com/2197988/amazon-investigates-engineers-spoke-out-against-ai-data-center/", "desc": "The engineers who spoke negatively about AI data centers at Seattle city hearings accuse Amazon of threatening their jobs over their testimonies.", "summary": "AI行业动态，关注大模型技术突破和商业化进展"}], "ytVideos": [{"id": "hF8swzNR1-o", "title": "Apple WWDC 2026 June 8: Introducing Siri AI and more", "url": "https://www.youtube.com/watch?v=hF8swzNR1-o", "channel": "Apple", "summary": "苹果AI生态更新，关注Siri能力升级和开发者工具变化"}, {"id": "ypL7kUiw_LM", "title": "Claude Opus 4.8: Lying Machine No More?", "url": "https://www.youtube.com/watch?v=ypL7kUiw_LM", "channel": "Two Minute Papers", "summary": "Anthropic动态，关注Claude模型能力和AI安全进展"}, {"id": "82m7YqosdgU", "title": "AI Agents as \"Games Masters\"? 🎮🔥", "url": "https://www.youtube.com/watch?v=82m7YqosdgU", "channel": "Two Minute Papers", "summary": "AI Agent趋势，关注自主代理和工具调用能力发展"}, {"id": "Dkqzqw8rxXI", "title": "DeepMind’s New AI Found A Strange New Way To Think", "url": "https://www.youtube.com/watch?v=Dkqzqw8rxXI", "channel": "Two Minute Papers", "summary": "谷歌AI动态，关注Gemini模型和搜索生态整合"}, {"id": "MOviZKtFeHM", "title": "A Second Nobel Prize for AlphaFold? 🧬🏆 #alphafold #deepmind #nobelprize #science #ai", "url": "https://www.youtube.com/watch?v=MOviZKtFeHM", "channel": "Two Minute Papers", "summary": "谷歌AI动态，关注Gemini模型和搜索生态整合"}, {"id": "RhheYbgT89Q", "title": "One company paid $500,000,000 for AI in one month", "url": "https://www.youtube.com/watch?v=RhheYbgT89Q", "channel": "Dave Jorgenson", "summary": "AI行业热点视频，点击观看详情"}, {"id": "huAwz_BR8WM", "title": "Demis Hassabis On What AI Will Do Next", "url": "https://www.youtube.com/watch?v=huAwz_BR8WM", "channel": "Two Minute Papers", "summary": "Two Minute Papers 解读最新AI论文和科研突破"}, {"id": "iz7elwbqZVI", "title": "Meet the AI \"Co-Scientist\" Changing Everything 🤖🧪 #ai", "url": "https://www.youtube.com/watch?v=iz7elwbqZVI", "channel": "Two Minute Papers", "summary": "Two Minute Papers 解读最新AI论文和科研突破"}, {"id": "vsKH3oPwss4", "title": "Einstein vs Feynman,  Who Wins? 🧠🤔 #physics #ai #science #feynman #research", "url": "https://www.youtube.com/watch?v=vsKH3oPwss4", "channel": "Two Minute Papers", "summary": "Two Minute Papers 解读最新AI论文和科研突破"}, {"id": "yz6I23VRbdg", "title": "What Happens After A 1,000,000x AI Compute Leap? | Jeff Dean", "url": "https://www.youtube.com/watch?v=yz6I23VRbdg", "channel": "Two Minute Papers", "summary": "AI芯片动态，关注算力需求和硬件迭代"}], "stocks": [{"code": "sz300285", "name": "国瓷材料", "zdf": "14.05", "price": "89.53"}, {"code": "sz002217", "name": "合力泰", "zdf": "-4.89", "price": "2.53"}, {"code": "sh600206", "name": "有研新材", "zdf": "6.84", "price": "42.51"}, {"code": "sh600584", "name": "长电科技", "zdf": "1.55", "price": "83.03"}, {"code": "sh600703", "name": "三安光电", "zdf": "2.21", "price": "17.54"}, {"code": "sz300308", "name": "中际旭创", "zdf": "7.19", "price": "1367.88"}, {"code": "sz159022", "name": "科创创业人工智能ETF富国", "zdf": "11.68", "price": "1.300"}, {"code": "sz000858", "name": "五 粮 液", "zdf": "-2.12", "price": "75.85"}, {"code": "sh601991", "name": "大唐发电", "zdf": "-9.97", "price": "8.22"}, {"code": "sh600667", "name": "太极实业", "zdf": "9.99", "price": "20.92"}, {"code": "sz300433", "name": "蓝思科技", "zdf": "8.90", "price": "55.77"}, {"code": "sz002428", "name": "云南锗业", "zdf": "1.19", "price": "100.44"}, {"code": "sz000725", "name": "京东方Ａ", "zdf": "-1.50", "price": "6.55"}, {"code": "sz000657", "name": "中钨高新", "zdf": "10.00", "price": "98.48"}, {"code": "sz000636", "name": "风华高科", "zdf": "0.73", "price": "74.60"}, {"code": "sh603773", "name": "沃格光电", "zdf": "-0.86", "price": "164.70"}, {"code": "sh600392", "name": "盛和资源", "zdf": "10.01", "price": "31.66"}, {"code": "sh603986", "name": "兆易创新", "zdf": "7.33", "price": "629.00"}, {"code": "sz002281", "name": "光迅科技", "zdf": "10.00", "price": "266.20"}, {"code": "sh600183", "name": "生益科技", "zdf": "2.06", "price": "183.87"}], "stats": [{"value": "20", "label": "雪球热门"}, {"value": "15", "label": "SA 新闻"}, {"value": "15", "label": "Engadget"}, {"value": "10", "label": "YouTube AI"}, {"value": "20", "label": "热搜股票"}]};
+
+document.getElementById('reportDate').textContent = DATA.date;
+
+const postsEl = document.getElementById('posts');
+DATA.posts.forEach((p, i) => {
+  const rank = i + 1;
+  const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+  const views = p.views >= 10000 ? (p.views / 10000).toFixed(1) + '万' : p.views;
+  postsEl.innerHTML += `
+    <div class="post-item">
+      <div class="post-title"><span class="post-rank ${rankClass}">${rank}</span><a href="https://xueqiu.com/${p.user_id}/${p.id}" target="_blank">${p.title}</a></div>
+      <div class="post-meta">
+        <span>👤 ${p.user}</span>
+        <span>❤️ ${p.likes}</span>
+        <span>💬 ${p.reply}</span>
+        <span>👁️ ${views}</span>
+        <a href="https://xueqiu.com/${p.user_id}/${p.id}" target="_blank" class="post-link">查看原文 ↗</a>
+      </div>
+      <div class="post-desc">${p.desc}</div>
+    </div>`;
+});
+
+const stocksEl = document.getElementById('stocks');
+DATA.stocks.forEach((s, i) => {
+  const zdf = parseFloat(s.zdf);
+  const cls = zdf > 0 ? 'up' : zdf < 0 ? 'down' : '';
+  const sign = zdf > 0 ? '+' : '';
+  stocksEl.innerHTML += `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${s.name}</td>
+      <td style="color:#8e8e93;font-size:11px">${s.code}</td>
+      <td class="${cls}">${sign}${s.zdf}%</td>
+      <td>${s.price}</td>
+    </tr>`;
+});
+
+const statsEl = document.getElementById('stats');
+DATA.stats.forEach(st => {
+  statsEl.innerHTML += `
+    <div class="stat-card">
+      <div class="value">${st.value}</div>
+      <div class="label">${st.label}</div>
+    </div>`;
+});
+
+// Seeking Alpha news
+const saEl = document.getElementById('saPosts');
+if (DATA.saNews && DATA.saNews.length > 0) {
+  DATA.saNews.forEach((n, i) => {
+    const rank = i + 1;
+    const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+    // Parse ticker string like "AAPL -1.89%"
+    const tickerMatch = n.ticker ? n.ticker.match(/^(\S+)\s+([+-]?[\d.]+%)?/) : null;
+    const tickerSym = tickerMatch ? tickerMatch[1] : (n.ticker || '');
+    const tickerChg = tickerMatch && tickerMatch[2] ? tickerMatch[2] : '';
+    const tickerCls = tickerChg.startsWith('+') ? 'up' : tickerChg.startsWith('-') ? 'down' : '';
+    let tickerHtml = '';
+    if (tickerSym) {
+      tickerHtml = `<span class="sa-ticker ${tickerCls}">${tickerSym}${tickerChg ? ' ' + tickerChg : ''}</span>`;
+    }
+    saEl.innerHTML += `
+      <div class="sa-news-item">
+        <div class="sa-news-title"><span class="post-rank ${rankClass}">${rank}</span><a href="${n.url}" target="_blank">${n.title}</a></div>
+        ${n.summary ? `<div class="post-desc">${n.summary}</div>` : ''}
+        <div class="sa-news-meta">
+          ${tickerHtml}
+          <a href="${n.url}" target="_blank" class="post-link">查看原文 ↗</a>
+        </div>
+      </div>`;
+  });
+} else {
+  saEl.innerHTML = '<div style="color:#8e8e93;font-size:14px;padding:12px 0">暂无数据</div>';
+}
+
+// Engadget news
+const engEl = document.getElementById('engadgetPosts');
+if (DATA.engNews && DATA.engNews.length > 0) {
+  DATA.engNews.forEach((n, i) => {
+    const rank = i + 1;
+    const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+    engEl.innerHTML += `
+      <div class="sa-news-item">
+        <div class="sa-news-title"><span class="post-rank ${rankClass}">${rank}</span><a href="${n.url}" target="_blank">${n.title}</a></div>
+        ${n.desc ? `<div class="post-desc">${n.desc}</div>` : ''}
+        ${n.summary ? `<div class="post-desc" style="color:#0f3460;font-style:italic">📝 ${n.summary}</div>` : ''}
+        <div class="sa-news-meta">
+          <a href="${n.url}" target="_blank" class="post-link">查看原文 ↗</a>
+        </div>
+      </div>`;
+  });
+} else {
+  engEl.innerHTML = '<div style="color:#8e8e93;font-size:14px;padding:12px 0">暂无数据</div>';
+}
+
+// YouTube AI videos
+const ytEl = document.getElementById('ytPosts');
+if (DATA.ytVideos && DATA.ytVideos.length > 0) {
+  DATA.ytVideos.forEach((v, i) => {
+    const rank = i + 1;
+    const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+    ytEl.innerHTML += `
+      <div class="sa-news-item">
+        <div class="sa-news-title"><span class="post-rank ${rankClass}">${rank}</span><a href="${v.url}" target="_blank">${v.title}</a></div>
+        ${v.summary ? `<div class="post-desc">${v.summary}</div>` : ''}
+        <div class="sa-news-meta">
+          ${v.channel ? `<span class="yt-channel">📹 ${v.channel}</span>` : ''}
+          ${v.views ? `<span>👁️ ${v.views}</span>` : ''}
+          <a href="${v.url}" target="_blank" class="post-link">观看视频 ↗</a>
+        </div>
+      </div>`;
+  });
+} else {
+  ytEl.innerHTML = '<div style="color:#8e8e93;font-size:14px;padding:12px 0">暂无数据</div>';
+}
+</script>
+
+</body>
+</html>
